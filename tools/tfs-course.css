@@ -101,3 +101,28 @@ article table:not(.tfs-table) th,
 article table:not(.tfs-table) td {
   padding: 0.2rem 1rem 0.2rem 0;
 }
+
+/* sounds from the notebook: a plain player, and spectrograms whose playhead follows the sound (assets/js/audio-spec.js) */
+audio.tfs-audio {
+  display: block;
+  width: 100%;
+  margin: 0.75rem 0 1.25rem;
+}
+
+figure.tfs-audio-spec {
+  margin: 1.25rem 0;
+}
+
+figure.tfs-audio-spec img {
+  border-radius: 8px;
+  height: auto;
+}
+
+html[data-theme="dark"] figure.tfs-audio-spec img {
+  box-shadow: 0 0 0 6px #fff;
+}
+
+figure.tfs-audio-spec audio {
+  display: block;
+  margin-top: 0.6rem;
+}

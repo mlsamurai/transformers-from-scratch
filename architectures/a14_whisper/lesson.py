@@ -573,10 +573,12 @@ del tiny64
 # attention layers fills a 1,500 × 1,500 table per head, and it does that whether the window holds thirty seconds of
 # speech or one word and silence. The decoder runs once per token, at most 224 times per window, and each run is small:
 # one new position attends to the tokens before it and to the 1,500 audio vectors, whose keys and values are computed
-# once per window and kept, the cache of lesson 8. In arithmetic the encoder's one pass is the bigger job at every
-# size. In time the decoder usually costs more, because its passes run one after another and each of them reads all
-# of the decoder's weights from memory to produce a single token. That is why OpenAI's fast *turbo* model keeps all 32
-# encoder blocks of the large model and only 4 of its 32 decoder blocks. Section 6 times both.
+# once per window and kept, the cache of lesson 8.
+#
+# In arithmetic the encoder's one pass is the bigger job at every size. In time the decoder usually costs more, because
+# its passes run one after another and each of them reads all of the decoder's weights from memory to produce a single
+# token. That is why OpenAI's fast *turbo* model keeps all 32 encoder blocks of the large model and only 4 of its 32
+# decoder blocks. Section 6 times both.
 #
 # > **Key point.** Nothing in this architecture is specific to speech except the front end and the stem. The decoder
 # > is a small language model that can read the audio through cross-attention, and what makes Whisper good is what it
@@ -1045,12 +1047,12 @@ for lang, items in SETS.items():
 # <img src="https://raw.githubusercontent.com/xmarva/transformers-from-scratch/main/assets/figures/a14/longform-light.png" width="760" alt="How Whisper transcribes a recording longer than 30 seconds. It decodes one 30-second window, moves the window to the last complete segment and decodes again, passing the previous text as a prompt. Each window is first decoded greedily at temperature 0; if the output repeats itself (its compression ratio is above 2.4) or is unlikely (mean log-probability below -1), it is decoded again at a higher temperature, up to 1. A window whose no-speech probability is above 0.6 and whose text is unlikely is treated as silence">
 #
 # *Too repetitive* is measured by compression. A decoder that gets stuck writes the same phrase again and again, and
-# such text compresses very well; OpenAI's code compresses the UTF-8 text with zlib and calls the window a failure if
-# it shrinks more than 2.4 times. *Too improbable* is a mean log-probability per token below −1. The temperatures tried
-# are 0, 0.2, 0.4 and so on up to 1, and above 0.5 the previous text is dropped from the prompt, since it may be what
-# led the decoder astray. A window whose no-speech probability is above 0.6 and whose text is improbable is skipped as
-# silence. Each of these rules lowered the error rate a little in the paper's long-form tests, from 11.0% for plain
-# greedy decoding to 10.0% with all of them.
+# such text compresses very well; OpenAI's code compresses the UTF-8 text with zlib and calls the window a failure if it
+# shrinks more than 2.4 times. *Too improbable* is a mean log-probability per token below −1. The temperatures tried are
+# 0, 0.2, 0.4 and so on up to 1, and above 0.5 the previous text is left out of the prompt. A window whose no-speech
+# probability is above 0.6 and whose text is improbable is skipped as silence. In the paper's long-form tests, averaged
+# over seven sets, beam search and these rules together took the error rate from 11.0% with plain greedy decoding to
+# 10.0%.
 
 
 # %%
@@ -1249,11 +1251,16 @@ def listen_for_speech(model, proc, audio, language=None):
     """Decode as transcribe() does: language, text, no-speech probability, mean log-prob."""
     features = features_of([dict(audio=audio)], proc, model.dtype)
     language = language or detect_language(model, features)
-    out = model.generate(
-        features, language=language, task="transcribe", return_timestamps=True
+    out = model.generate(  # at most 224 new tokens, as transcribe() allows
+        features,
+        language=language,
+        task="transcribe",
+        return_timestamps=True,
+        max_new_tokens=224,
     )
     prompt = [SOT, special(proc, f"<|{language}|>"), special(proc, "<|transcribe|>")]
     tokens = [x for x in out[0].tolist() if x not in prompt and x != EOT]
+    tokens = tokens[: model.config.max_target_positions - len(prompt) - 1]
     ids = torch.tensor([prompt + tokens + [EOT]], device=device)
     logits = model(input_features=features, decoder_input_ids=ids).logits[0].float()
     no_speech = logits[0].softmax(-1)[special(proc, "<|nocaptions|>", "<|nospeech|>")]
@@ -1299,12 +1306,14 @@ display(table(pd.DataFrame(outputs_table)))
 # watching*, *Subtitles by the Amara.org community* in a dozen languages, *Untertitel im Auftrag des ZDF* in German,
 # and in Russian *Продолжение следует...*, *Субтитры сделал DimaTorzok* and *Редактор субтитров … Корректор …* with
 # different names ([discussion #928](https://github.com/openai/whisper/discussions/928), [#1873](https://github.com/openai/whisper/discussions/1873),
-# [#2372](https://github.com/openai/whisper/discussions/2372)). These are the credits and sign-offs of subtitles and
-# videos, the text that sits over the quiet end of a film or a clip. OpenAI never said where its audio came from
-# beyond "audio that is paired with transcripts on the Internet", so this explanation is the community's, but it fits:
-# the model learned that a stretch with no voice in it often comes with exactly this text. OpenAI's model card gives a
-# more general reason, that the decoder's knowledge of language makes it predict likely text along with transcribing
-# the audio. When the audio gives it nothing, likely text is all that is left.
+# [#2372](https://github.com/openai/whisper/discussions/2372)).
+#
+# These are the credits and sign-offs of subtitles and videos, the text that sits over the quiet end of a film or a
+# clip. OpenAI never said where its audio came from beyond "audio that is paired with transcripts on the Internet", so
+# this explanation is the community's, but it fits: the model learned that a stretch with no voice in it often comes
+# with exactly this text. OpenAI's model card gives a more general reason, that the decoder's knowledge of language
+# makes it predict likely text along with transcribing the audio. When the audio gives it nothing, likely text is all
+# that is left.
 #
 # Here are the two numbers for every output above, with real speech from twenty LibriSpeech clips for comparison:
 
@@ -1383,8 +1392,8 @@ display(table(counts.reset_index()))
 # The timestamp tokens place pieces of text in time to 20 ms, but a piece is usually a sentence or a clause. For the
 # time of every word Whisper's code reuses something the model already computes: cross-attention. When the decoder
 # predicts a word, some of its heads look at the stretch of audio where that word was said. Not all heads do; OpenAI
-# found, for each model, the few heads whose attention follows the speech, and ships their list as *alignment heads*.
-# For whisper-tiny there are six, one in the third decoder block and five in the fourth.
+# picked, for each model, a few heads whose attention follows the speech, and ships their list as *alignment heads*. For
+# whisper-tiny there are six, one in the third decoder block and five in the fourth.
 #
 # <img src="https://raw.githubusercontent.com/xmarva/transformers-from-scratch/main/assets/figures/a14/alignment-light.png" width="760" alt="How Whisper finds when each word was said. A few cross-attention heads, the alignment heads, look at the part of the sound each text token comes from. Their attention, tokens by audio frames, forms a bright diagonal band; dynamic time warping finds the monotonic path through it, and the path gives each word a start and an end time">
 #
@@ -1524,11 +1533,11 @@ display(
 )
 
 # %% [markdown]
-# ⟨run: alignment interpretation⟩ The times are good to a few frames, not to the millisecond: the attention is a
-# by-product of transcription, not something trained to mark boundaries, and the first word always starts at zero
-# because the path does. When the exact edges matter, as in subtitles cut to the frame, WhisperX aligns the transcript
-# again with a separate phoneme recogniser; for search inside a recording or for following along, the attention is
-# enough and costs one extra decoder pass.
+# ⟨run: alignment interpretation⟩ The times are approximate: the attention is a by-product of transcription, not
+# something trained to mark boundaries, and the first word always starts at zero because the path does. When the exact
+# edges matter, as in subtitles cut to the frame, WhisperX aligns the transcript again with a separate phoneme
+# recogniser; for search inside a recording or for following along, the attention is enough and costs one extra decoder
+# pass.
 
 # %% [markdown]
 # ## 10. Where speech recognition is in 2026
@@ -1547,15 +1556,17 @@ display(
 # **What replaced it at the top.** On the Hugging Face Open ASR Leaderboard, which by November 2026 ranks 69 models on
 # English with a default average of nine test sets, two of them private, whisper-large-v3 is 48th, with an average
 # error rate of 8.24% ([Open ASR Leaderboard](https://huggingface.co/spaces/hf-audio/open_asr_leaderboard),
-# v1.16.0). The leaders are of three kinds. Encoder–decoders with a Conformer encoder, convolution and attention in
-# every block, and a light decoder, such as NVIDIA's Canary and Cohere's Transcribe ([Srivastav et al.,
+# v1.16.0).
+#
+# The leaders are of three kinds. Encoder–decoders with a Conformer encoder, convolution and attention in every block,
+# and a light decoder, such as NVIDIA's Canary and Cohere's Transcribe ([Srivastav et al.,
 # 2025](https://arxiv.org/abs/2510.06961) found this pairing gives the best average accuracy). Transducers and CTC
 # models with no autoregressive decoder at all, such as NVIDIA's Parakeet, which transcribes up to 24 minutes in one
-# pass and on a data-centre GPU runs thousands of times faster than real time. And speech-augmented language models, which feed an audio
-# encoder's output to a large language model the way lesson 13 fed images: Mistral's Voxtral uses Whisper large-v3's
-# encoder for this ([Liu et al., 2025](https://arxiv.org/abs/2507.13264)), and NVIDIA's Canary-Qwen, IBM's Granite
-# Speech and Qwen3-ASR are built the same way. About a third of the open models on the leaderboard still derive from
-# Whisper's encoder or architecture.
+# pass and on a data-centre GPU runs thousands of times faster than real time. And speech-augmented language models,
+# which feed an audio encoder's output to a large language model the way lesson 13 fed images: Mistral's Voxtral uses
+# Whisper large-v3's encoder for this ([Liu et al., 2025](https://arxiv.org/abs/2507.13264)), and NVIDIA's Canary-Qwen,
+# IBM's Granite Speech and Qwen3-ASR are built the same way. About a third of the open models on the leaderboard still
+# derive from Whisper's encoder or architecture.
 #
 # **Streaming.** Whisper needs the whole 30-second window before it starts, which suits files and not live captions.
 # Moonshine replaced the fixed window with rotary positions and no padding, and its second version attends within a

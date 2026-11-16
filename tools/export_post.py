@@ -322,7 +322,8 @@ def export(number: str, site: Path, exported: dict[str, tuple[Path, dict]]) -> P
         "---",
         "layout: post",
         f'title: "{title}"',
-        f"date: {meta['published_on']} {9 + meta['number']:02d}:00:00",
+        # a morning time, so the post is never in the future on its day; lessons of one day keep their order
+        f"date: {meta['published_on']} 09:{meta['number']:02d}:00",
         *([f"last_updated: {meta['updated_on']}"] if "updated_on" in meta else []),
         *([f"permalink: {post_url(folder, meta)}"] if url_year(meta) != str(meta["published_on"])[:4] else []),
         f'description: "{meta["description"]}"',
