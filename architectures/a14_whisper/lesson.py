@@ -45,9 +45,10 @@
 # 2. Write Whisper's front end from scratch, from the waveform to the log-mel spectrogram, and match the library's
 #    features.
 # 3. Write the encoder and the decoder of whisper-tiny from scratch on its weights and match the model's logits.
-# 4. Steer the decoder with its special tokens: identify the language, transcribe, translate, ask for timestamps.
-# 5. Decode greedily by hand, then transcribe two-minute recordings by cutting them blindly and the way Whisper does.
-# 6. Measure word error rates in English and Russian for four sizes of Whisper, with a WER written from scratch.
+# 4. Steer the decoder with its special tokens: identify the language, transcribe, translate, ask for timestamps; then
+#    decode greedily by hand.
+# 5. Measure word error rates in English and Russian for four sizes of Whisper, with a WER written from scratch.
+# 6. Transcribe two-minute recordings by cutting them blindly and the way Whisper does, and see what blind cuts lose.
 # 7. Give it silence and noise, see what it writes, and test the rule that is supposed to catch that.
 # 8. Find when each word was said from cross-attention, with dynamic time warping written from scratch.
 #
@@ -1010,12 +1011,12 @@ plt.show()
 # doesn't say how it decoded its multilingual tables, but their FLEURS English column equals its beam-search table, and
 # beam search helps a weak model most.
 #
-# The timing table shows what turbo bought. Its encoder, 32 blocks of width 1,280, takes 156 ms per window, eight times
-# small's. Its decoder step takes 5.9 ms, half of small's and about the same as tiny's: for one token at a time a GPU
-# waits on the number of blocks run one after another more than on their width, and turbo has four. A 30-second window
-# of English takes about a hundred decoder steps, so turbo spends about 0.6 s decoding it after a 0.16 s encoder pass;
-# with the 32 decoder blocks of large-v3, every one of those steps would run eight times as many blocks. Tiny's encoder
-# is slower than base's only because tiny runs in float32 here, which the T4's tensor cores don't speed up.
+# The timing table shows what turbo bought. Its encoder, 32 blocks of width 1,280, takes 173 ms per window, nine times
+# small's. Its decoder step takes 6.7 ms, about half of small's and close to tiny's: for one token at a time a GPU waits
+# on the number of blocks run one after another more than on their width, and turbo has four. A 30-second window of
+# English takes about a hundred decoder steps, so turbo spends about 0.7 s decoding it after a 0.17 s encoder pass; with
+# the 32 decoder blocks of large-v3, every one of those steps would run eight times as many blocks. Tiny's encoder is
+# slower than base's only because tiny runs in float32 here, which the T4's tensor cores don't speed up.
 #
 # The gap between the languages follows the training data. Of Whisper's 680,000 hours, 438,218 are English speech with
 # English transcripts and 9,761 are Russian, the fourth-largest language after Chinese, German and Spanish. The paper
