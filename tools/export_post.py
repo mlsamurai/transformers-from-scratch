@@ -182,6 +182,31 @@ def alt_text(code: str) -> str:
     return titles[0] if titles else "Output of the code above"
 
 
+AUDIO_SOURCE = re.compile(r'src="data:(audio/[a-z-]+);base64,([A-Za-z0-9+/=]+)"')
+PNG_SOURCE = re.compile(r'src="data:image/png;base64,([A-Za-z0-9+/=]+)"')
+
+
+def audio_block(fragment: str, assets: Path, web: str, counter: list[int]) -> str:
+    """A sound in the notebook on the site: IPython's player, or tfs.viz.audio_spectrogram's picture with a player.
+
+    The picture and the sound are written next to the post as files. The block's inline script is dropped: the
+    site's audio-spec.js gives the same playhead to every block of class tfs-audio-spec.
+    """
+    counter[0] += 1
+    stem = f"output-{counter[0]:02d}"
+    sound = AUDIO_SOURCE.search(fragment)
+    (assets / f"{stem}.wav").write_bytes(base64.b64decode(sound.group(2)))
+    if "tfs-audio-spec" not in fragment:  # IPython.display.Audio
+        return f'<audio class="tfs-audio" controls preload="none" src="{web}/{stem}.wav"></audio>'
+    picture = PNG_SOURCE.search(fragment)
+    (assets / f"{stem}.png").write_bytes(base64.b64decode(picture.group(1)))
+    fragment = re.sub(r"<script>.*?</script>", "", fragment, flags=re.S)
+    fragment = PNG_SOURCE.sub(f'src="{web}/{stem}.png" loading="lazy"', fragment)
+    fragment = AUDIO_SOURCE.sub(f'src="{web}/{stem}.wav"', fragment).replace('preload="metadata"', 'preload="none"')
+    fragment = fragment.replace('<div class="tfs-audio-spec"', '<figure class="tfs-audio-spec" markdown="0"', 1)
+    return fragment[: fragment.rfind("</div>")] + "</figure>"
+
+
 def output_blocks(cell, assets: Path, web: str, counter: list[int]) -> list[str]:
     blocks, text = [], []
 
@@ -203,6 +228,9 @@ def output_blocks(cell, assets: Path, web: str, counter: list[int]) -> list[str]
                 (assets / name).write_bytes(base64.b64decode(data["image/png"]))
                 alt = html.escape(alt_text(cell.source))
                 blocks.append(f'<img class="tfs-output" src="{web}/{name}" alt="{alt}" loading="lazy">')
+            elif "text/html" in data and ("tfs-audio-spec" in data["text/html"] or "<audio" in data["text/html"]):
+                flush()
+                blocks.append(audio_block(data["text/html"], assets, web, counter))
             elif "text/html" in data:
                 flush()
                 table = re.sub(r"color:#[0-9A-Fa-f]{6};background:#[0-9A-Fa-f]{6};", "", data["text/html"])
