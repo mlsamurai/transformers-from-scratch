@@ -30,6 +30,7 @@ import base64
 import html
 import re
 import shutil
+import subprocess
 import sys
 from pathlib import Path
 
@@ -182,6 +183,44 @@ def alt_text(code: str) -> str:
     return titles[0] if titles else "Output of the code above"
 
 
+AUDIO_SOURCE = re.compile(r'src="data:(audio/[a-z-]+);base64,([A-Za-z0-9+/=]+)"')
+PNG_SOURCE = re.compile(r'src="data:image/png;base64,([A-Za-z0-9+/=]+)"')
+
+
+def save_sound(data: bytes, assets: Path, stem: str) -> str:
+    """Write the notebook's WAV next to the post, as MP3 when ffmpeg is installed (a tenth of the size)."""
+    wav = assets / f"{stem}.wav"
+    wav.write_bytes(data)
+    if shutil.which("ffmpeg") is None:
+        return wav.name
+    mp3 = assets / f"{stem}.mp3"
+    command = ["ffmpeg", "-loglevel", "error", "-y", "-i", str(wav), "-codec:a", "libmp3lame", "-b:a", "48k", str(mp3)]
+    subprocess.run(command, check=True)
+    wav.unlink()
+    return mp3.name
+
+
+def audio_block(fragment: str, assets: Path, web: str, counter: list[int]) -> str:
+    """A sound in the notebook on the site: IPython's player, or tfs.viz.audio_spectrogram's picture with a player.
+
+    The picture and the sound are written next to the post as files. The block's inline script is dropped: the
+    site's audio-spec.js gives the same playhead to every block of class tfs-audio-spec.
+    """
+    counter[0] += 1
+    stem = f"output-{counter[0]:02d}"
+    sound = AUDIO_SOURCE.search(fragment)
+    name = save_sound(base64.b64decode(sound.group(2)), assets, stem)
+    if "tfs-audio-spec" not in fragment:  # IPython.display.Audio
+        return f'<audio class="tfs-audio" controls preload="none" src="{web}/{name}"></audio>'
+    picture = PNG_SOURCE.search(fragment)
+    (assets / f"{stem}.png").write_bytes(base64.b64decode(picture.group(1)))
+    fragment = re.sub(r"<script>.*?</script>", "", fragment, flags=re.S)
+    fragment = PNG_SOURCE.sub(f'src="{web}/{stem}.png" loading="lazy"', fragment)
+    fragment = AUDIO_SOURCE.sub(f'src="{web}/{name}"', fragment).replace('preload="metadata"', 'preload="none"')
+    fragment = fragment.replace('<div class="tfs-audio-spec"', '<figure class="tfs-audio-spec" markdown="0"', 1)
+    return fragment[: fragment.rfind("</div>")] + "</figure>"
+
+
 def output_blocks(cell, assets: Path, web: str, counter: list[int]) -> list[str]:
     blocks, text = [], []
 
@@ -203,6 +242,9 @@ def output_blocks(cell, assets: Path, web: str, counter: list[int]) -> list[str]
                 (assets / name).write_bytes(base64.b64decode(data["image/png"]))
                 alt = html.escape(alt_text(cell.source))
                 blocks.append(f'<img class="tfs-output" src="{web}/{name}" alt="{alt}" loading="lazy">')
+            elif "text/html" in data and ("tfs-audio-spec" in data["text/html"] or "<audio" in data["text/html"]):
+                flush()
+                blocks.append(audio_block(data["text/html"], assets, web, counter))
             elif "text/html" in data:
                 flush()
                 table = re.sub(r"color:#[0-9A-Fa-f]{6};background:#[0-9A-Fa-f]{6};", "", data["text/html"])
@@ -280,7 +322,8 @@ def export(number: str, site: Path, exported: dict[str, tuple[Path, dict]]) -> P
         "---",
         "layout: post",
         f'title: "{title}"',
-        f"date: {meta['published_on']} {9 + meta['number']:02d}:00:00",
+        # a morning time, so the post is never in the future on its day; lessons of one day keep their order
+        f"date: {meta['published_on']} 09:{meta['number']:02d}:00",
         *([f"last_updated: {meta['updated_on']}"] if "updated_on" in meta else []),
         *([f"permalink: {post_url(folder, meta)}"] if url_year(meta) != str(meta["published_on"])[:4] else []),
         f'description: "{meta["description"]}"',

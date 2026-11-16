@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 370" width="760" height="370" role="img" aria-label="whisper-tiny&#x27;s passport. Published September 2022 by OpenAI under the MIT licence. An encoder–decoder Transformer with 4 encoder and 4 decoder blocks of width 384. Audio in: a 80-band log-mel spectrogram of 30 seconds, 1,500 encoder positions. Text out: byte-level BPE with 51,865 tokens. Tasks: transcription, translation into English, language identification, timestamps. Trained on 680,000 hours of weakly supervised web audio. Good at clean speech in many languages; not for streaming, silence without a voice detector, or exact verbatim records">
+<title>whisper-tiny&#x27;s passport. Published September 2022 by OpenAI under the MIT licence. An encoder–decoder Transformer with 4 encoder and 4 decoder blocks of width 384. Audio in: a 80-band log-mel spectrogram of 30 seconds, 1,500 encoder positions. Text out: byte-level BPE with 51,865 tokens. Tasks: transcription, translation into English, language identification, timestamps. Trained on 680,000 hours of weakly supervised web audio. Good at clean speech in many languages; not for streaming, silence without a voice detector, or exact verbatim records</title>
+<defs>
+<marker id="arrow-muted" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5B6575"/></marker>
+<marker id="arrow-data" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#C27A0E"/></marker>
+<marker id="arrow-enc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0F8C7E"/></marker>
+<marker id="arrow-dec" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#D23F57"/></marker>
+<marker id="arrow-att" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6A55D8"/></marker>
+</defs>
+<rect width="760" height="370" rx="12" fill="#FFFFFF"/>
+<text x="14.0" y="28.0" text-anchor="start" font-family="IBM Plex Sans" font-size="16" font-weight="600" fill="#1D2430">whisper-tiny: the passport</text>
+<text x="14.0" y="50.0" text-anchor="start" font-family="IBM Plex Sans" font-size="13" font-weight="400" fill="#5B6575">the same card ends every lesson of the course</text>
+<text x="14.0" y="89.0" text-anchor="start" font-family="IBM Plex Mono" font-size="12" font-weight="400" fill="#5B6575">published</text>
+<rect x="190.0" y="70.0" width="556.0" height="28.0" rx="9" fill="#ECE8FC" stroke="#6A55D8" stroke-width="1.5"/>
+<text x="200.0" y="89.0" text-anchor="start" font-family="IBM Plex Sans" font-size="13" font-weight="400" fill="#1D2430">September 2022, OpenAI; MIT licence (code and weights)</text>
+<text x="14.0" y="123.0" text-anchor="start" font-family="IBM Plex Mono" font-size="12" font-weight="400" fill="#5B6575">type</text>
+<rect x="190.0" y="104.0" width="556.0" height="28.0" rx="9" fill="#FFFFFF" stroke="#B9C0CB" stroke-width="1.5"/>
+<text x="200.0" y="123.0" text-anchor="start" font-family="IBM Plex Sans" font-size="13" font-weight="400" fill="#1D2430">encoder–decoder Transformer, 4 + 4 blocks of 384</text>
+<text x="14.0" y="157.0" text-anchor="start" font-family="IBM Plex Mono" font-size="12" font-weight="400" fill="#5B6575">audio in</text>
+<rect x="190.0" y="138.0" width="556.0" height="28.0" rx="9" fill="#FFFFFF" stroke="#B9C0CB" stroke-width="1.5"/>
+<text x="200.0" y="157.0" text-anchor="start" font-family="IBM Plex Sans" font-size="13" font-weight="400" fill="#1D2430">80-band log-mel, 30 s, 1,500 encoder positions</text>
+<text x="14.0" y="191.0" text-anchor="start" font-family="IBM Plex Mono" font-size="12" font-weight="400" fill="#5B6575">text out</text>
+<rect x="190.0" y="172.0" width="556.0" height="28.0" rx="9" fill="#FFFFFF" stroke="#B9C0CB" stroke-width="1.5"/>
+<text x="200.0" y="191.0" text-anchor="start" font-family="IBM Plex Sans" font-size="13" font-weight="400" fill="#1D2430">byte-level BPE, 51,865 tokens, up to 448 positions</text>
+<text x="14.0" y="225.0" text-anchor="start" font-family="IBM Plex Mono" font-size="12" font-weight="400" fill="#5B6575">tasks</text>
+<rect x="190.0" y="206.0" width="556.0" height="28.0" rx="9" fill="#FFFFFF" stroke="#B9C0CB" stroke-width="1.5"/>
+<text x="200.0" y="225.0" text-anchor="start" font-family="IBM Plex Sans" font-size="13" font-weight="400" fill="#1D2430">transcription, translation into English, language ID, timestamps</text>
+<text x="14.0" y="259.0" text-anchor="start" font-family="IBM Plex Mono" font-size="12" font-weight="400" fill="#5B6575">training</text>
+<rect x="190.0" y="240.0" width="556.0" height="28.0" rx="9" fill="#FFFFFF" stroke="#B9C0CB" stroke-width="1.5"/>
+<text x="200.0" y="259.0" text-anchor="start" font-family="IBM Plex Sans" font-size="13" font-weight="400" fill="#1D2430">680,000 hours of weakly supervised audio with transcripts from the web</text>
+<text x="14.0" y="293.0" text-anchor="start" font-family="IBM Plex Mono" font-size="12" font-weight="400" fill="#5B6575">good at</text>
+<rect x="190.0" y="274.0" width="556.0" height="28.0" rx="9" fill="#FFFFFF" stroke="#B9C0CB" stroke-width="1.5"/>
+<text x="200.0" y="293.0" text-anchor="start" font-family="IBM Plex Sans" font-size="13" font-weight="400" fill="#1D2430">clean speech in many languages, robust to accents and noise</text>
+<text x="14.0" y="327.0" text-anchor="start" font-family="IBM Plex Mono" font-size="12" font-weight="400" fill="#5B6575">not for</text>
+<rect x="190.0" y="308.0" width="556.0" height="28.0" rx="9" fill="#FFFFFF" stroke="#B9C0CB" stroke-width="1.5"/>
+<text x="200.0" y="327.0" text-anchor="start" font-family="IBM Plex Sans" font-size="13" font-weight="400" fill="#1D2430">streaming, silence without a voice detector, exact verbatim records</text>
+</svg>
