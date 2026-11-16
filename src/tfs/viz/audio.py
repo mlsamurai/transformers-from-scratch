@@ -81,9 +81,9 @@ def audio_spectrogram(audio, sr: int, values, *, title: str | None = None, alt: 
               extent=(0, duration, 0, rows), vmin=vmin, vmax=vmax, interpolation="nearest")
     ax.set_xlabel("time, s")
     ax.set_ylabel(ylabel)
+    ax.grid(False)  # grid lines would cross the picture
     if labels is not None:
         ax.set_yticks([rows - i - 0.5 for i in range(rows)], [str(t) for t in labels], fontsize=7)
-        ax.grid(False)
     if title:
         ax.set_title(title, loc="left")
     png = io.BytesIO()

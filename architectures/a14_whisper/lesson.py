@@ -177,11 +177,10 @@ plt.tight_layout()
 plt.show()
 
 # %% [markdown]
-# ⟨run: the vowel panel⟩ The repeating shape in the third panel is the voice itself: each repeat is one puff of air
-# through the vibrating vocal folds, and the autocorrelation finds about ⟨pitch⟩ of them per second, an ordinary pitch
-# for a man's voice. The shape inside each repeat, the smaller ripples, depends on how the tongue and lips shape the
-# mouth, and that is what makes this vowel this vowel. Nothing in the raw numbers says *he* or *hoped*; a model has to
-# find it.
+# The repeating shape in the third panel is the voice itself: each repeat is one puff of air through the vibrating vocal
+# folds, and the autocorrelation finds about 128 of them per second, an ordinary pitch for a man's voice. The shape
+# inside each repeat, the smaller ripples, depends on how the tongue and lips shape the mouth, and that is what makes
+# this vowel this vowel. Nothing in the raw numbers says *he* or *hoped*; a model has to find it.
 #
 # The Russian clips sound like this, a man or a woman reading a sentence of an encyclopedic text:
 
@@ -285,8 +284,8 @@ print(
 )
 
 # %% [markdown]
-# ⟨run: diffs⟩ The features agree exactly and the filters to the ninth decimal. Here is what each step does to the
-# example, from the raw power to what the model receives:
+# The features agree exactly and the filters to the ninth decimal. Here is what each step does to the example, from the
+# raw power to what the model receives:
 
 # %%
 x = torch.as_tensor(example["audio"])
@@ -367,9 +366,9 @@ print(f"its padded tail: {float(tail.min()):.3f} to {float(tail.max()):.3f}")
 print(f"30 s of silence: {float(silence.min()):.3f} to {float(silence.max()):.3f}")
 
 # %% [markdown]
-# ⟨run⟩ The 20 seconds of padding after the sentence are not silence in the model's terms: they sit at the floor of
-# this particular clip, ⟨floor⟩, which a model trained on padded windows has learned to read as *nothing more here*.
-# Hold on to the −1.5; section 8 feeds it to the model.
+# The example spans exactly 2 units, from −0.699 to 1.301, and the 20 seconds of padding after the sentence are not
+# silence in the model's terms: they sit at this clip's floor, −0.699, which a model trained on padded windows has
+# learned to read as *nothing more here*. Hold on to the −1.5; section 8 feeds it to the model.
 
 # %% [markdown]
 # ## 3. Whisper in one picture
@@ -565,9 +564,9 @@ W = W32
 del tiny64
 
 # %% [markdown]
-# ⟨run: diffs⟩ In float64 the two agree to the twelfth decimal, so the code above is the model. In float32 they differ
-# in the fourth significant digit at worst, on outputs as large as 17, because the library adds the same numbers in a
-# different order, and the scores for the next token agree to ⟨logits diff⟩.
+# On a GPU the two agree to the last bit in float64 (on a CPU, to the twelfth decimal), so the code above is the model.
+# In float32 the encoder's outputs differ by less than 0.001 on values as large as 17, because the library adds the same
+# numbers in a different order, and the scores for the next token by less than 0.0001.
 #
 # The shapes say where the work goes. The encoder runs once per 30-second window, over 1,500 positions, so each of its
 # attention layers fills a 1,500 × 1,500 table per head, and it does that whether the window holds thirty seconds of
@@ -679,7 +678,11 @@ plt.tight_layout()
 plt.show()
 
 # %% [markdown]
-# ⟨run: LID interpretation⟩
+# Tiny names the language of all twenty English clips and of nineteen of the twenty Russian ones; the clip it gets wrong
+# it takes for Ukrainian. When it is right it is sure: the right language gets 0.99 of the probability on average for
+# English and 0.94 for Russian. On a log scale the runners-up make sense for the Russian clip, Belarusian and, after
+# English, Ukrainian, the languages closest to Russian. For the English clip they are Latin, Welsh and Japanese at a few
+# in ten thousand, too small to mean anything.
 #
 # The same step gives a second number. When a training window held no speech, the model was taught to write
 # `<|nocaptions|>` right after *start of transcript*, where the language would go. Its probability at that step is the
@@ -724,7 +727,17 @@ display(table(pd.DataFrame(rows)))
 print("reference:", clip["text"])
 
 # %% [markdown]
-# ⟨run: tasks interpretation⟩
+# Tiny's transcript has the shape of the sentence and the wrong letters: *И следователи*, and the investigators, for
+# *Исследователи*, researchers, and *садения* for *соединения*. Asked for timestamps, the same model on the same audio
+# starts differently and worse, *исследовать для университета*: the task tokens are part of the context, and a weak
+# model's guesses move with it. Asked to translate, tiny writes a fluent English sentence that has nothing to do with
+# the clip.
+#
+# Small transcribes the sentence without an error and translates it well, except for two Russian words with two meanings
+# each: *соединения*, compounds, became *connections*, and *почек*, of the kidneys, became *of the buds*. The paper
+# scores Russian-to-English translation on FLEURS at 3.1 BLEU for tiny and 19.7 for small. The timestamped lines show
+# the format: each segment opens and closes with a time token, and both models split this sentence in two, tiny at 6.94
+# seconds and small at 6.76.
 #
 # What the library's `generate` does with these tokens is a loop you can write yourself. Greedy decoding takes the most
 # likely next token, appends it and runs the decoder again, until *end of text*. Two details make it match the library
@@ -769,10 +782,11 @@ print(tok.decode(ours))
 print(f"mean log-probability per token: {np.mean(logprobs):.3f}")
 
 # %% [markdown]
-# ⟨run⟩ Our loop recomputes the whole decoder for every new token, which is fine for a lesson and wasteful in
-# practice; the library keeps the keys and values of past tokens and of the audio, and runs only the new position.
-# The mean log-probability of the chosen tokens, ⟨value⟩ here, is the model's own measure of how sure it was, and
-# section 7 shows Whisper using it to decide whether to trust a transcript.
+# Our loop writes the same tokens as `generate()` on all twenty clips. It recomputes the whole decoder for every new
+# token, which is fine for a lesson and wasteful in practice; the library keeps the keys and values of past tokens and
+# of the audio, and runs only the new position. The mean log-probability of the chosen tokens, −0.17 here, a probability
+# of 0.84 per token on a geometric average, is the model's own measure of how sure it was, and section 7 shows Whisper
+# using it to decide whether to trust a transcript.
 
 # %% [markdown]
 # ## 6. Counting the mistakes
@@ -830,7 +844,7 @@ print("whisper:   ", hyp)
 print(f"WER as written: {100 * wer([example['text']], [hyp]):.0f}%")
 
 # %% [markdown]
-# ⟨run⟩ By that count tiny got almost every word wrong, and it didn't. LibriSpeech's references are in capitals without
+# By that count tiny got every word wrong, and it didn't. LibriSpeech's references are in capitals without
 # punctuation, and Whisper writes ordinary text, so *He* against *HE* and *dinner,* against *DINNER* are errors. Whisper
 # learned from transcripts in every style the web has, so its output can't be expected to follow one dataset's
 # conventions, and its authors score it after normalising both sides: lower case, no punctuation, *Mr.* as *mister*,
@@ -858,10 +872,11 @@ for kind, r, h in align(ref, hyp):
         print(f"  {kind}: {r or '—'} → {h or '—'}")
 
 # %% [markdown]
-# ⟨run: example errors⟩
+# Two errors are left, and both are real: tiny heard *flour fattened sauce* as *flour fat and sauce*, one substitution
+# and one insertion, 2 errors against 28 words of reference, 7.1%.
 #
-# > **Trap.** A word error rate means nothing without its normalisation. The same transcript scores ⟨raw⟩% or
-# > ⟨normalised⟩% depending on whether capitals and commas count, and papers that normalise differently can't be
+# > **Trap.** A word error rate means nothing without its normalisation. The same transcript scores 100% or
+# > 7.1% depending on whether capitals and commas count, and papers that normalise differently can't be
 # > compared. Whisper's paper found differences of up to half the WER on some datasets from such details alone.
 #
 # Now four sizes of Whisper on our 200 English and 200 Russian clips: tiny, base and small from the original 2022
@@ -963,16 +978,18 @@ for lang, color, label in (
         ms=7,
         label=label,
     )
-    for _, r in accuracy.iterrows():
-        ax.annotate(
-            r["model"],
-            (r["parameters, M"], r[f"WER {lang}, %"]),
-            textcoords="offset points",
-            xytext=(6, 4),
-            fontsize=9,
-            color=COLORS["muted"],
-        )
+for _, r in accuracy.iterrows():  # model names once, above the upper line
+    ax.annotate(
+        r["model"],
+        (r["parameters, M"], r["WER ru, %"]),
+        textcoords="offset points",
+        xytext=(0, 9),
+        ha="center",
+        fontsize=9,
+        color=COLORS["muted"],
+    )
 ax.set_xscale("log")
+ax.margins(x=0.12)  # room for the last name
 ax.set_xticks(
     accuracy["parameters, M"], [f"{v:,.0f}" for v in accuracy["parameters, M"]]
 )
@@ -986,7 +1003,19 @@ plt.tight_layout()
 plt.show()
 
 # %% [markdown]
-# ⟨run: WER interpretation⟩
+# On English the three original models land within a point of the paper's numbers, which were measured on all 2,620
+# utterances of test-clean; two hundred utterances move a word error rate by about that much. Russian is harder for
+# every model, and the gap narrows with size: tiny gets more than a third of the words wrong, each step up removes a
+# third to a half of what is left, and turbo gets 3.8%. Tiny's Russian is four points worse than the paper's. The paper
+# doesn't say how it decoded its multilingual tables, but their FLEURS English column equals its beam-search table, and
+# beam search helps a weak model most.
+#
+# The timing table shows what turbo bought. Its encoder, 32 blocks of width 1,280, takes 156 ms per window, eight times
+# small's. Its decoder step takes 5.9 ms, half of small's and about the same as tiny's: for one token at a time a GPU
+# waits on the number of blocks run one after another more than on their width, and turbo has four. A 30-second window
+# of English takes about a hundred decoder steps, so turbo spends about 0.6 s decoding it after a 0.16 s encoder pass;
+# with the 32 decoder blocks of large-v3, every one of those steps would run eight times as many blocks. Tiny's encoder
+# is slower than base's only because tiny runs in float32 here, which the T4's tensor cores don't speed up.
 #
 # The gap between the languages follows the training data. Of Whisper's 680,000 hours, 438,218 are English speech with
 # English transcripts and 9,761 are Russian, the fourth-largest language after Chinese, German and Spanish. The paper
@@ -1012,7 +1041,13 @@ for item, hyp in zip(russian, outputs[best, "ru"]):
 display(table(pd.DataFrame(worst).sort_values("errors", ascending=False).head(6)))
 
 # %% [markdown]
-# ⟨run: worst examples⟩
+# Turbo's worst clip has ten errors, and they are a fair sample of what is left at this level: a name split in two,
+# *Баласубраманиан* as *баласу браманиан*; *Цинциннати* heard as *сан ценнати*; *Блю-Эш* written as one word; and one
+# real howler, *наркотического опьянения*, narcotic intoxication, written as *наркотического объединения*, a narcotic
+# association. Further down the errors are hardly errors. The reference keeps *50 миль*, which the original text gave in
+# parentheses and turbo left out; the normaliser turned the reference's *29¾ на 24½* into *293 4 на 241 2*; the
+# reference itself has a typo, *чтобыу*; *Цзюлун* and *тсю лун* are two transliterations of Kowloon. At a few percent, a
+# word error rate measures the references and the normaliser almost as much as the model.
 #
 # One more number from these runs: how many tokens the decoder writes per second of speech.
 
@@ -1029,7 +1064,10 @@ for lang, items in SETS.items():
     )
 
 # %% [markdown]
-# ⟨run: tokens per second⟩
+# English costs 3.3 tokens per second of speech and 1.24 per word; Russian 4.1 per second and 2.41 per word. The
+# vocabulary has the same size as GPT-2's and serves 99 languages, so a Russian word comes out in about twice as many
+# pieces as an English one. The decoder, which runs once per token, does a quarter more work per second of Russian
+# speech, and has more pieces to get right for every word.
 
 # %% [markdown]
 # ## 7. Recordings longer than 30 seconds
@@ -1067,8 +1105,9 @@ print(f"three ordinary transcripts: {compression_ratio(normal):.2f}")
 print(f"a decoder stuck in a loop:  {compression_ratio(stuck):.2f}")
 
 # %% [markdown]
-# ⟨run⟩ The library implements the same recipe in its `generate`, with one difference to know about: it compresses the
-# token ids rather than the text, two bytes per token, so its threshold is 1.35 rather than 2.4.
+# Three ordinary transcripts compress 1.58 times, a decoder stuck in a loop 8 times. The library implements the same
+# recipe in its `generate`, with one difference to know about: it compresses the token ids rather than the text, two
+# bytes per token, so its threshold is 1.35 rather than 2.4.
 #
 # To test the recipe we need long recordings with exact transcripts. LibriSpeech's utterances are consecutive pieces of
 # audiobook chapters, so joining the first utterances of a chapter until they last about two minutes gives a long
@@ -1161,8 +1200,15 @@ for name, model, proc in (("tiny", tiny, processor), ("small", small, small_proc
 display(table(pd.DataFrame(rows), digits=2))
 
 # %% [markdown]
-# ⟨run: long-form table⟩ Here are the longest stretches of the reference that small dropped when it read blind
-# 30-second pieces without timestamps:
+# The first line of each model is the surprise. Cut blindly and decoded without timestamps, small makes 17.5% errors on
+# recordings it otherwise transcribes at 2 to 3%, and almost all of them are words it left out, 655 of them; tiny both
+# drops and invents, 354 words lost and 392 added. The same pieces decoded with timestamps give 2.9% and 6.8%. The words
+# cut in half at the borders cost far less: moving the windows to the last timestamp takes small from 2.9% to 1.8% and
+# tiny from 6.8% to 5.8%, and on clean audiobooks the prompt and the fallback add little, 1.8% to 1.7% for small and
+# nothing for tiny.
+#
+# Here are the longest stretches of the reference that small dropped when it read blind 30-second pieces without
+# timestamps:
 
 
 # %%
@@ -1189,7 +1235,13 @@ for run in sorted(runs, key=len, reverse=True)[:5]:
 print(f"{len(runs)} stretches of six words or more in {len(recordings)} recordings")
 
 # %% [markdown]
-# ⟨run: long-form interpretation⟩
+# Whole sentences are missing, up to 84 words in a row, and nothing in the output says so: the transcript reads on from
+# a later point. Without timestamps the model writes one block of text for the whole window, and on a full window of
+# speech it sometimes ends that block early. With timestamps it writes short segments, each tied to a time, and goes on
+# to the end of the window. This is why OpenAI's `transcribe()` always decodes with timestamps, and why the library
+# refuses audio longer than 30 seconds unless `return_timestamps=True`. The sequential method is three to four times
+# slower here, because its windows depend on each other and are decoded one after another, while blind pieces go in one
+# batch.
 
 # %% [markdown]
 # ## 8. When nobody speaks
@@ -1295,14 +1347,20 @@ for clip, audio in CLIPS.items():
                 )
             )
             shown = f"[{used}] " if language is None else ""
-            row[name] = ("(skipped) " if skipped else "") + shown + (text or "—")
+            short = text if len(text) <= 140 else text[:140] + "…"  # loops run on
+            row[name] = ("(skipped) " if skipped else "") + shown + (short or "—")
         outputs_table.append(row)
 display(table(pd.DataFrame(outputs_table)))
 
 # %% [markdown]
-# ⟨run: hallucination interpretation⟩
+# Every one of the 36 runs wrote something, on recordings with no voice in them. In English the outputs are short and
+# look harmless: *you*, a full stop, *Thank you.*, *so*. Told that the speech is Russian, tiny and small write the
+# credits of a subtitle editor and a proofreader with invented names, the same template with different initials, and
+# turbo writes *Продолжение следует...*, to be continued, and on the loud hiss *Субтитры сделал DimaTorzok*, subtitles
+# by DimaTorzok. Left to detect the language, tiny and small hear Norwegian Nynorsk, Welsh and Javanese in the noise and
+# fill the window with a loop, while turbo settles on English and thanks us.
 #
-# The phrases are not random. People who run Whisper on long recordings have collected them for years: *Thank you for
+# The phrases are not random, and turbo's two are well known. People who run Whisper on long recordings have collected them for years: *Thank you for
 # watching*, *Subtitles by the Amara.org community* in a dozen languages, *Untertitel im Auftrag des ZDF* in German,
 # and in Russian *Продолжение следует...*, *Субтитры сделал DimaTorzok* and *Редактор субтитров … Корректор …* with
 # different names ([discussion #928](https://github.com/openai/whisper/discussions/928), [#1873](https://github.com/openai/whisper/discussions/1873),
@@ -1363,8 +1421,13 @@ counts = heard.groupby("model").agg(
 display(table(counts.reset_index()))
 
 # %% [markdown]
-# ⟨run: scatter interpretation⟩ The rule skips a window only in the lower right corner of each panel, where the model
-# both expects no speech and is unsure of its text.
+# For tiny and small the two numbers separate speech from noise well: real speech sits at the top left, and every
+# recording without speech has a no-speech probability above 0.8. But the rule also needs the text to be improbable, and
+# the fluent hallucinations are probable: the subtitle credits, *you* and the loops sit above −1, a loop being very
+# likely once it has started, so the rule keeps them. It skips 9 of tiny's 12 outputs and 5 of small's. Turbo is another
+# case: its no-speech probability is close to zero for everything, speech or not, so the rule never fires and all twelve
+# of its outputs go through. Its release notes say only that it was fine-tuned on transcription data; whatever the
+# reason, the number tells nothing for this model, and neither does the rule built on it.
 #
 # > **Trap.** The no-speech probability is not a voice detector. `transcribe()` drops a window only when that
 # > probability is high *and* the text is improbable, so a hallucination the model is sure of goes straight into the
@@ -1458,7 +1521,10 @@ plt.tight_layout()
 plt.show()
 
 # %% [markdown]
-# ⟨run: grid interpretation⟩
+# The six framed heads draw a clean diagonal: each text token attends to a short stretch of the sound, and later tokens
+# to later sound. They are not the only ones. Some unframed heads draw diagonals as clean, one of them already in the
+# first block, while others, such as heads 2 and 5 of the second block, attend to the same few frames for every token.
+# OpenAI's list is one good choice, not the only heads that align.
 #
 # To turn the attention into times, OpenAI's code does four things, and we copy them. Each head's weights are
 # standardised along the tokens, so that a frame counts when it stands out for one token rather than for all; a median
@@ -1533,11 +1599,11 @@ display(
 )
 
 # %% [markdown]
-# ⟨run: alignment interpretation⟩ The times are approximate: the attention is a by-product of transcription, not
-# something trained to mark boundaries, and the first word always starts at zero because the path does. When the exact
-# edges matter, as in subtitles cut to the frame, WhisperX aligns the transcript again with a separate phoneme
-# recogniser; for search inside a recording or for following along, the attention is enough and costs one extra decoder
-# pass.
+# The times are approximate: the attention is a by-product of transcription, not something trained to mark boundaries.
+# *He* starts at 0.00 although the voice starts about half a second in, because the path has to start in the corner, and
+# *dinner,* runs to 2.82 because the comma's row takes the pause after the word. When the exact edges matter, as in
+# subtitles cut to the frame, WhisperX aligns the transcript again with a separate phoneme recogniser; for search inside
+# a recording or for following along, the attention is enough and costs one extra decoder pass.
 
 # %% [markdown]
 # ## 10. Where speech recognition is in 2026
