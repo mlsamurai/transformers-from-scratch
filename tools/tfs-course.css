@@ -58,6 +58,13 @@ pre.tfs-printed code {
   margin: 1rem 0;
 }
 
+/* a long string without spaces (a model stuck repeating one letter) wraps instead of widening its column; the
+   minimum width keeps ordinary words whole on a phone, where the table scrolls inside its frame instead */
+.tfs-table-wrap td {
+  overflow-wrap: anywhere;
+  min-width: 7rem;
+}
+
 .tfs-table-wrap .tfs-table {
   color: var(--global-text-color);
   background: transparent;
