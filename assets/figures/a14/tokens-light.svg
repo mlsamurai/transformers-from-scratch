@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" width="760" height="300" role="img" aria-label="Whisper&#x27;s task format. Every output starts with the start-of-transcript token, then a language token, then transcribe or translate, then either no-timestamps or timestamp tokens around each segment. The same decoder transcribes English, writes timestamps, or translates Russian speech into English text, depending only on these first tokens. Asked for the first token after start-of-transcript, it names the language">
+<title>Whisper&#x27;s task format. Every output starts with the start-of-transcript token, then a language token, then transcribe or translate, then either no-timestamps or timestamp tokens around each segment. The same decoder transcribes English, writes timestamps, or translates Russian speech into English text, depending only on these first tokens. Asked for the first token after start-of-transcript, it names the language</title>
+<defs>
+<marker id="arrow-muted" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5B6575"/></marker>
+<marker id="arrow-data" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#C27A0E"/></marker>
+<marker id="arrow-enc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0F8C7E"/></marker>
+<marker id="arrow-dec" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#D23F57"/></marker>
+<marker id="arrow-att" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6A55D8"/></marker>
+</defs>
+<rect width="760" height="300" rx="12" fill="#FFFFFF"/>
+<text x="14.0" y="28.0" text-anchor="start" font-family="IBM Plex Sans" font-size="16" font-weight="600" fill="#1D2430">One decoder for several tasks, chosen by the first tokens</text>
+<text x="14.0" y="50.0" text-anchor="start" font-family="IBM Plex Sans" font-size="13" font-weight="400" fill="#5B6575">special tokens are ordinary vocabulary entries; the model learned what follows each of them</text>
+<text x="14.0" y="96.0" text-anchor="start" font-family="IBM Plex Mono" font-size="11" font-weight="400" fill="#5B6575">transcribe</text>
+<rect x="110.0" y="78.0" width="145.3" height="26.0" rx="7" fill="#D23F57" stroke="#D23F57" stroke-width="1.5"/>
+<text x="182.7" y="94.7" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" font-weight="500" fill="#FFFFFF" xml:space="preserve">&lt;|startoftranscript|&gt;</text>
+<rect x="260.3" y="78.0" width="50.8" height="26.0" rx="7" fill="#D23F57" stroke="#D23F57" stroke-width="1.5"/>
+<text x="285.7" y="94.7" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" font-weight="500" fill="#FFFFFF" xml:space="preserve">&lt;|en|&gt;</text>
+<rect x="316.1" y="78.0" width="101.2" height="26.0" rx="7" fill="#D23F57" stroke="#D23F57" stroke-width="1.5"/>
+<text x="366.8" y="94.7" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" font-weight="500" fill="#FFFFFF" xml:space="preserve">&lt;|transcribe|&gt;</text>
+<rect x="422.4" y="78.0" width="113.8" height="26.0" rx="7" fill="#D23F57" stroke="#D23F57" stroke-width="1.5"/>
+<text x="479.3" y="94.7" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" font-weight="500" fill="#FFFFFF" xml:space="preserve">&lt;|notimestamps|&gt;</text>
+<rect x="541.2" y="78.0" width="31.9" height="26.0" rx="7" fill="#FBE6EA" stroke="#D23F57" stroke-width="1.5"/>
+<text x="557.1" y="94.7" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" font-weight="500" fill="#A82D42" xml:space="preserve"> He</text>
+<rect x="578.1" y="78.0" width="50.8" height="26.0" rx="7" fill="#FBE6EA" stroke="#D23F57" stroke-width="1.5"/>
+<text x="603.5" y="94.7" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" font-weight="500" fill="#A82D42" xml:space="preserve"> hoped</text>
+<rect x="633.9" y="78.0" width="50.8" height="26.0" rx="7" fill="#FBE6EA" stroke="#D23F57" stroke-width="1.5"/>
+<text x="659.3" y="94.7" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" font-weight="500" fill="#A82D42" xml:space="preserve"> there</text>
+<rect x="689.7" y="78.0" width="50.8" height="26.0" rx="7" fill="#FBE6EA" stroke="#D23F57" stroke-width="1.5"/>
+<text x="715.1" y="94.7" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" font-weight="500" fill="#A82D42" xml:space="preserve"> would</text>
+<text x="14.0" y="146.0" text-anchor="start" font-family="IBM Plex Mono" font-size="11" font-weight="400" fill="#5B6575">with times</text>
+<rect x="110.0" y="128.0" width="145.3" height="26.0" rx="7" fill="#D23F57" stroke="#D23F57" stroke-width="1.5"/>
+<text x="182.7" y="144.7" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" font-weight="500" fill="#FFFFFF" xml:space="preserve">&lt;|startoftranscript|&gt;</text>
+<rect x="260.3" y="128.0" width="50.8" height="26.0" rx="7" fill="#D23F57" stroke="#D23F57" stroke-width="1.5"/>
+<text x="285.7" y="144.7" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" font-weight="500" fill="#FFFFFF" xml:space="preserve">&lt;|en|&gt;</text>
+<rect x="316.1" y="128.0" width="101.2" height="26.0" rx="7" fill="#D23F57" stroke="#D23F57" stroke-width="1.5"/>
+<text x="366.8" y="144.7" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" font-weight="500" fill="#FFFFFF" xml:space="preserve">&lt;|transcribe|&gt;</text>
+<rect x="422.4" y="128.0" width="63.4" height="26.0" rx="7" fill="#D23F57" stroke="#D23F57" stroke-width="1.5"/>
+<text x="454.1" y="144.7" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" font-weight="500" fill="#FFFFFF" xml:space="preserve">&lt;|0.00|&gt;</text>
+<rect x="490.8" y="128.0" width="31.9" height="26.0" rx="7" fill="#FBE6EA" stroke="#D23F57" stroke-width="1.5"/>
+<text x="506.7" y="144.7" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" font-weight="500" fill="#A82D42" xml:space="preserve"> He</text>
+<rect x="527.7" y="128.0" width="50.8" height="26.0" rx="7" fill="#FBE6EA" stroke="#D23F57" stroke-width="1.5"/>
+<text x="553.1" y="144.7" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" font-weight="500" fill="#A82D42" xml:space="preserve"> hoped</text>
+<rect x="583.5" y="128.0" width="50.8" height="26.0" rx="7" fill="#FBE6EA" stroke="#D23F57" stroke-width="1.5"/>
+<text x="608.9" y="144.7" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" font-weight="500" fill="#A82D42" xml:space="preserve"> there</text>
+<rect x="639.3" y="128.0" width="63.4" height="26.0" rx="7" fill="#D23F57" stroke="#D23F57" stroke-width="1.5"/>
+<text x="671.0" y="144.7" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" font-weight="500" fill="#FFFFFF" xml:space="preserve">&lt;|1.84|&gt;</text>
+<text x="14.0" y="196.0" text-anchor="start" font-family="IBM Plex Mono" font-size="11" font-weight="400" fill="#5B6575">translate</text>
+<rect x="110.0" y="178.0" width="145.3" height="26.0" rx="7" fill="#D23F57" stroke="#D23F57" stroke-width="1.5"/>
+<text x="182.7" y="194.7" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" font-weight="500" fill="#FFFFFF" xml:space="preserve">&lt;|startoftranscript|&gt;</text>
+<rect x="260.3" y="178.0" width="50.8" height="26.0" rx="7" fill="#D23F57" stroke="#D23F57" stroke-width="1.5"/>
+<text x="285.7" y="194.7" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" font-weight="500" fill="#FFFFFF" xml:space="preserve">&lt;|ru|&gt;</text>
+<rect x="316.1" y="178.0" width="94.9" height="26.0" rx="7" fill="#D23F57" stroke="#D23F57" stroke-width="1.5"/>
+<text x="363.6" y="194.7" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" font-weight="500" fill="#FFFFFF" xml:space="preserve">&lt;|translate|&gt;</text>
+<rect x="416.1" y="178.0" width="113.8" height="26.0" rx="7" fill="#D23F57" stroke="#D23F57" stroke-width="1.5"/>
+<text x="473.0" y="194.7" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" font-weight="500" fill="#FFFFFF" xml:space="preserve">&lt;|notimestamps|&gt;</text>
+<rect x="534.9" y="178.0" width="50.8" height="26.0" rx="7" fill="#FBE6EA" stroke="#D23F57" stroke-width="1.5"/>
+<text x="560.3" y="194.7" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" font-weight="500" fill="#A82D42" xml:space="preserve"> Hello</text>
+<rect x="590.7" y="178.0" width="23.1" height="26.0" rx="7" fill="#FBE6EA" stroke="#D23F57" stroke-width="1.5"/>
+<text x="602.2" y="194.7" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" font-weight="500" fill="#A82D42" xml:space="preserve">,</text>
+<text x="14.0" y="246.0" text-anchor="start" font-family="IBM Plex Mono" font-size="11" font-weight="400" fill="#5B6575">find language</text>
+<rect x="110.0" y="228.0" width="145.3" height="26.0" rx="7" fill="#D23F57" stroke="#D23F57" stroke-width="1.5"/>
+<text x="182.7" y="244.7" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" font-weight="500" fill="#FFFFFF" xml:space="preserve">&lt;|startoftranscript|&gt;</text>
+<rect x="260.3" y="228.0" width="94.9" height="26.0" rx="7" fill="#D23F57" stroke="#D23F57" stroke-width="1.5"/>
+<text x="307.8" y="244.7" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" font-weight="500" fill="#FFFFFF" xml:space="preserve">→ &lt;|ru|&gt; 0.97</text>
+<text x="14.0" y="286.0" text-anchor="start" font-family="IBM Plex Sans" font-size="13" font-weight="400" fill="#5B6575">timestamps come in steps of 0.02 s; the transcript between them is one segment</text>
+</svg>
