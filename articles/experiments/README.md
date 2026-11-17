@@ -1,1 +1,1 @@
-The code of this article moved to [korolevalab/articles](https://github.com/korolevalab/articles/tree/main/experiments).
+The code of this article moved to [mlsamurai/articles](https://github.com/mlsamurai/articles/tree/main/experiments).

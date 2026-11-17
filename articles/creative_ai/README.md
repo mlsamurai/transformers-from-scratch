@@ -1,1 +1,1 @@
-The code of this article moved to [korolevalab/articles](https://github.com/korolevalab/articles/tree/main/creative_ai).
+The code of this article moved to [mlsamurai/articles](https://github.com/mlsamurai/articles/tree/main/creative_ai).
