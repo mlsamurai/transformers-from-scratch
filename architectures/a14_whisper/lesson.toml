@@ -1,8 +1,0 @@
-number = 14
-short_title = "Whisper"
-cover_alt = "Lesson 14 cover, speech recognition with Whisper. A small spectrogram drawn as a grid of cells, some of them red, and below it the tokens of a transcript: a red language token followed by the words He hoped"
-gpu = true
-published = true
-published_on = 2026-11-16
-description = "How Whisper turns speech into text: the log-mel front end and the encoder–decoder written from scratch and checked against whisper-tiny, the task tokens that choose transcription, translation and timestamps, word error rates in English and Russian on LibriSpeech and FLEURS, what it writes on silence, and word timings from cross-attention."
-tags = "whisper, speech-recognition, asr, audio, spectrogram, encoder-decoder, openai"
