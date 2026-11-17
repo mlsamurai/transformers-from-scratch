@@ -1,5 +1,6 @@
 number = 2
 short_title = "RoBERTa→ModernBERT"
+post_title = "How BERT changed from RoBERTa to ModernBERT"
 cover_alt = "Lesson 2 cover: from RoBERTa to ModernBERT. Four encoders in a row, each with the one thing it changed: the training recipe, the training task, the attention, and the whole block"
 gpu = true
 published = true

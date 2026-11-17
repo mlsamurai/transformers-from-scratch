@@ -1,5 +1,6 @@
 number = 3
 short_title = "Embeddings & search"
+post_title = "Semantic search with Sentence-BERT, cross-encoders and ColBERT"
 cover_alt = "Lesson 3 cover: embeddings and search. Query tokens on the left, each with its best-matching token of a document on the right, and the score as the sum of these best matches"
 gpu = true
 published = true

@@ -1,5 +1,6 @@
 number = 1
 short_title = "Tokenization"
+post_title = "Tokenization and BPE from scratch"
 cover_alt = "Lesson 1 cover: Tokenization, from scratch. An English word split from characters into subword tokens"
 gpu = false
 published = true

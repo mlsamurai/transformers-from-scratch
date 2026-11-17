@@ -1,5 +1,6 @@
 number = 3
 short_title = "Training & decoding"
+post_title = "Training a Transformer and decoding with beam search"
 cover_alt = "Lesson 3 cover: Training and decoding, and why translators search while chatbots sample. The validation loss falls epoch by epoch, and the translation of 'Tom forgot to lock the door.' is right by the third epoch"
 gpu = true
 published = true

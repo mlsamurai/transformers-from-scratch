@@ -1,5 +1,6 @@
 number = 5
 short_title = "What Llama changed"
+post_title = "What Llama changed in the Transformer with RoPE, RMSNorm and SwiGLU"
 cover_alt = "Lesson 5 cover: What Llama changed. Four design details of the 2017 Transformer next to their replacements in Llama 3.1: LayerNorm after each block becomes RMSNorm before it, ReLU becomes SwiGLU, added sinusoids become rotary position embeddings, and the biases go"
 gpu = true
 published = true

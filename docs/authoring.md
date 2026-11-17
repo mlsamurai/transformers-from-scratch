@@ -9,7 +9,8 @@ lessons/
   _shared/setup.py          cells included in every lesson (install helpers, quiet outputs, seed, plot style)
   01_tokenization/
     lesson.py               the lesson, jupytext "percent" format: the only file you edit
-    lesson.toml             number, short title, cover alt text, gpu
+    lesson.toml             number, short title, cover alt text, gpu; post_title if the post on the site
+                            takes a different title from the notebook's heading
     figures.py              static concept diagrams and covers (optional)
 notebooks/                  generated, committed: Colab opens them from GitHub, Kaggle receives them
   colab/01_tokenization.ipynb

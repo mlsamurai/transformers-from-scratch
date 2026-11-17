@@ -1,5 +1,6 @@
 number = 10
 short_title = "Mamba and hybrids"
+post_title = "Mamba and state space models instead of attention"
 cover_alt = "Lesson 10 cover, Mamba. A fixed-size state of channels, each fading at its own rate, updated token by token"
 gpu = true
 published = true

@@ -1,5 +1,6 @@
 number = 4
 short_title = "GPT & chess"
+post_title = "GPT-2 from scratch and a small GPT that learns chess"
 cover_alt = "Lesson 4 cover: GPT and chess. A line of chess notation read one character at a time, and the board the model reconstructs inside from those characters"
 gpu = true
 published = true

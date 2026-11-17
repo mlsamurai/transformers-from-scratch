@@ -1,5 +1,6 @@
 number = 5
 short_title = "T5 & BART"
+post_title = "T5 and BART from scratch and a T5 that writes SQL"
 cover_alt = "Lesson 5 cover: T5 and BART. A question read whole by the encoder, How many singers are younger than 30, and the SQL query the decoder writes token by token, SELECT count(*) FROM singer WHERE Age < 30, with the less-than sign highlighted, checked by running it on SQLite"
 gpu = true
 published = true
