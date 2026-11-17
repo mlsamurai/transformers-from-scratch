@@ -318,6 +318,8 @@ def export(number: str, site: Path, exported: dict[str, tuple[Path, dict]]) -> P
             body.append(fenced(cell.source.rstrip()))
             body.extend(output_blocks(cell, assets, web, counter))
 
+    # the site may name the lesson differently from the notebook's heading (lesson.toml post_title)
+    title = meta.get("post_title", title)
     front = [
         "---",
         "layout: post",

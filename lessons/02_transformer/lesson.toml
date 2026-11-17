@@ -1,5 +1,6 @@
 number = 2
 short_title = "The Transformer"
+post_title = "A Transformer from scratch in PyTorch"
 cover_alt = "Lesson 2 cover: The Transformer in PyTorch. In the Russian translation of 'The researcher said she was exhausted', the English word 'she' decides the feminine forms of three Russian words"
 gpu = false
 published = true
