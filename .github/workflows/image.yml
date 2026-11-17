@@ -9,7 +9,7 @@ on:
     paths: ["perevod/**", ".github/workflows/image.yml"]
 
 env:
-  IMAGE: ghcr.io/xmarva/perevod
+  IMAGE: ghcr.io/mlsamurai/perevod
   PLATFORMS: linux/amd64,linux/arm64
   # OCI media types in both builds, and no attestations: those record when and where a build
   # ran, so no two builds have the same ones
